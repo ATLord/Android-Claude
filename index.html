@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rooted Pixel AVD · Play Integrity (Strong)</title>
+<meta name="description" content="A reproducible recipe for a rooted Pixel-class Android emulator (AVD) that passes Google Play Integrity all the way to MEETS_STRONG_INTEGRITY — Play Protect certified — and presents as real Pixel hardware. Bring your own keybox." />
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Rooted Pixel AVD · Passes Play Integrity (Strong)" />
+<meta property="og:description" content="Custom kernel + TEESimulator attestation forging that takes a rooted Android emulator to MEETS_STRONG_INTEGRITY, Play Protect certified — with your own keybox." />
+<meta property="og:image" content="media/play-integrity-verdict.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<div class="glow"></div>
+<div class="content">
+
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> AVD&nbsp;Integrity</div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#chain">The chain</a>
+      <a href="#start">Quick start</a>
+      <a href="reproduction.html">Reproduction</a>
+      <a class="nav-cta" href="https://github.com/tanishmeh/AVD_Rooted_Integrity">GitHub ↗</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="pill"><span class="live"></span> MEETS_STRONG_INTEGRITY · Play Protect certified</span>
+      <h1>A rooted Android emulator that <span class="grad">passes Strong Play Integrity.</span></h1>
+      <p class="lede">A reproducible recipe for a rooted Pixel-class AVD that returns a full <code>MEETS_STRONG_INTEGRITY</code> verdict and presents as real <code>Pixel&nbsp;9</code> hardware to apps — custom kernel, TEESimulator attestation forging, and complete fingerprint suppression. No StrongBox required: bring your own keybox.</p>
+      <div class="hero-btns">
+        <a class="btn btn-primary" href="https://github.com/tanishmeh/AVD_Rooted_Integrity">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.8 10.9.6.1.8-.2.8-.5v-1.7c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+          View on GitHub
+        </a>
+        <a class="btn btn-ghost" href="reproduction.html">Full reproduction guide</a>
+      </div>
+      <div class="hero-meta">
+        <span><b>Pixel 9 Pro XL</b> · komodo</span>
+        <span><b>android-36</b> · arm64-v8a</span>
+        <span><b>Custom 6.6</b> kernel</span>
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="media/play-integrity-verdict.png" alt="Play Integrity verdict dialog showing MEETS_BASIC_INTEGRITY, MEETS_DEVICE_INTEGRITY and MEETS_STRONG_INTEGRITY on a rooted Pixel 9 Pro XL AVD" />
+      <div class="shot-tag"><span class="chk">●</span> Live verdict — all three labels</div>
+    </div>
+  </div>
+</header>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">What it does</div>
+    <h2>Three layers that must hold at once</h2>
+    <p class="section-lede">The verdict is produced by DroidGuard inside <span class="inline-code">com.google.android.gms.unstable</span>. It fails if <em>any</em> layer leaks — a forged chain that doesn't validate, an emulator fingerprint in props or <span class="inline-code">/proc</span>, or a visible root module. This stack holds all three simultaneously, all the way to <strong>strong</strong> integrity.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 6v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Attestation forging</h3>
+        <p>TEESimulator intercepts the keystore request and forges a complete hardware-attestation chain from <em>your</em> keybox — rooted in Google's attestation root, internally consistent, accepted for strong integrity.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 4h16v12H4z"/><path d="M2 20h20"/><path d="M8 8h8M8 12h5"/></svg></div>
+        <h3>Fingerprint suppression</h3>
+        <p>Per-partition props, <span class="inline-code">/vendor/build.prop</span> bind mounts, and source-level kernel spoofs erase every <code class="inline-c">emu64a</code> / <code class="inline-c">ranchu</code> / <code class="inline-c">goldfish</code> tell from userspace.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><path d="m4 4 16 16"/></svg></div>
+        <h3>Root invisibility</h3>
+        <p>SUSFS hides the injected <code class="inline-c">.so</code> maps, KSU/SUSFS symbols, and module list — so <span class="inline-code">gms.unstable</span> can't see its own hooks in <span class="inline-code">/proc/self/maps</span>.</p>
+      </div>
+    </div>
+    <div class="verdict-strip">
+      <span class="vlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> MEETS_BASIC_INTEGRITY</span>
+      <span class="vlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> MEETS_DEVICE_INTEGRITY</span>
+      <span class="vlabel strong"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> MEETS_STRONG_INTEGRITY</span>
+      <span class="vlabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> Play Protect certified</span>
+    </div>
+  </div>
+</section>
+
+<!-- THE CHAIN -->
+<section id="chain">
+  <div class="wrap">
+    <div class="eyebrow">The integrity chain</div>
+    <h2>Five layers, end to end</h2>
+    <p class="section-lede">Every layer is documented with the exact failure mode it prevents and the script that enforces it. The full reasoning lives in <a href="https://github.com/tanishmeh/AVD_Rooted_Integrity/blob/master/docs/INTEGRITY_CHAIN.md" target="_blank" rel="noopener">INTEGRITY_CHAIN.md ↗</a>.</p>
+    <div class="chain">
+      <div class="layer">
+        <div class="num">01</div>
+        <div><h3>A hardware-attestation chain that validates</h3><p>TEESimulator forges the chain from your <code>keybox.xml</code> in <strong>GENERATE</strong> mode — a fresh leaf key plus a complete chain signed by your keybox, rooted in Google's attestation root. That internally-consistent chain is what carries the verdict to <strong>strong</strong> integrity. The subtle trap: a service restart flips it to <strong>PATCH</strong> mode, which Google rejects.</p></div>
+      </div>
+      <div class="layer">
+        <div class="num">02</div>
+        <div><h3>No emulator fingerprint in identity props</h3><p>keymint reads attestation IDs from per-partition props <em>and</em> the on-disk <code>/vendor/build.prop</code>. Bind-mounting a spoofed file over it is the piece that actually clears <code>CANNOT_ATTEST_IDS</code>.</p></div>
+      </div>
+      <div class="layer">
+        <div class="num">03</div>
+        <div><h3><code>/proc/*</code> doesn't say "ranchu / goldfish"</h3><p>The kernel filters <code>/proc/modules</code> and spoofs <code>/proc/cpuinfo</code> at the source level; on-device bind mounts and SUSFS open-redirects cover <code>cpuinfo</code>, <code>version</code>, <code>cmdline</code>, <code>modules</code> and the devicetree compatible string.</p></div>
+      </div>
+      <div class="layer">
+        <div class="num">04</div>
+        <div><h3>The root stack itself is invisible</h3><p>SUSFS <code>add_sus_map</code> hides each injected <code>.so</code>; SELinux ALLOW rules let zygote <code>dlopen</code> ReZygisk; <code>uname</code> and KSU/SUSFS symbols are spoofed away.</p></div>
+      </div>
+      <div class="layer">
+        <div class="num">05</div>
+        <div><h3>Networking looks real</h3><p><code>wlan0</code> is brought up by wrapping <code>eth0</code> with the <code>virt_wifi</code> kernel module and joining the <code>VirtWifi</code> network — a device with no Wi-Fi interface is itself a weak emulator signal, and the GSF check-in needs it.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRAPS -->
+<section id="traps">
+  <div class="wrap">
+    <div class="eyebrow">Hard-won knowledge</div>
+    <h2>The two traps that waste days</h2>
+    <p class="section-lede">If integrity "randomly" stops working, it is almost always one of these. The post-mortem in the <a href="reproduction.html#trap">reproduction guide</a> is the part nobody else documents.</p>
+    <div class="traps">
+      <div class="trap">
+        <div class="hd"><span class="badge">TRAP 01</span><h3>Never restart the attestation services</h3></div>
+        <p>Restarting <code>keymint</code> / <code>keystore2</code> / <code>TEESimulator</code> by hand feels right — but it flips TEESimulator from GENERATE into PATCH mode, producing a chain Google rejects. <b>To apply any change, cold reboot.</b> Recovery from a broken verdict is also just a cold reboot.</p>
+      </div>
+      <div class="trap">
+        <div class="hd"><span class="badge">TRAP 02</span><h3>Never run <code>autopif</code></h3></div>
+        <p>It overwrites the pinned Pixel 9 (<code>tokay</code>) <code>custom.pif.prop</code> with a drifting profile — e.g. <code>felix</code> / Pixel Fold — whose fingerprint no longer matches the spoofed build ID, and the verdict fails.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section id="start">
+  <div class="wrap">
+    <div class="eyebrow">Quick start</div>
+    <h2>From source to verdict</h2>
+    <p class="section-lede">Source and scripts only — no prebuilt binaries or device images. The one thing you must supply yourself is a valid keybox.</p>
+    <div class="codeblock">
+      <div class="bar"><span class="d" style="background:#ff5f56"></span><span class="d" style="background:#ffbd2e"></span><span class="d" style="background:#27c93f"></span><span class="t">bash</span></div>
+<pre><code><span class="c-com"># 1 · Build the kernel (Docker; ~10 GB, 5–25 min)</span>
+<span class="c-cmd">cd</span> kernel-build && <span class="c-cmd">docker</span> build -t kbuild . && \
+  <span class="c-cmd">docker</span> run --rm -v <span class="c-flag">"$PWD"</span>:/work -v kbuild-sources:/work/sources \
+    -w /work kbuild ./scripts/build-all.sh && <span class="c-cmd">cd</span> ..
+
+<span class="c-com"># 2 · Provide YOUR keybox (gitignored — never commit a real one)</span>
+<span class="c-cmd">cp</span> /path/to/your/keybox.xml device/data_adb/tricky_store/keybox.xml
+
+<span class="c-com"># 3 · Boot the AVD with the custom kernel</span>
+./scripts/start_avd.sh
+
+<span class="c-com"># 4 · Install the root modules (see device/modules.md), then:</span>
+./scripts/install-device-setup.sh
+
+<span class="c-com"># 5 · Cold reboot once, then verify GENERATE mode + the verdict</span>
+./scripts/verify-integrity.sh <span class="c-flag">--trigger</span></code></pre>
+    </div>
+
+    <div class="callout good" style="margin-top:24px">
+      <span class="ci">📖</span>
+      <p><strong>This is the condensed path.</strong> The complete walkthrough — AVD creation, the exact module versions, the GENERATE-vs-PATCH post-mortem, and the troubleshooting table — is on the <a href="reproduction.html">full reproduction guide&nbsp;→</a></p>
+    </div>
+
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div class="tx"><b>Build the custom kernel</b><span>KSU-Next + SUSFS + anti-emulator source patches → <code class="inline-c">out/Image.gz</code></span></div></div>
+      <div class="step"><span class="n">2</span><div class="tx"><b>Boot &amp; install the root stack</b><span>KernelSU-Next manager + SUSFS, ReZygisk, PIF, TEESimulator</span></div></div>
+      <div class="step"><span class="n">3</span><div class="tx"><b>Push the on-device setup</b><span>Prop spoofs, bind mounts, SUSFS rules, your keybox at 0644, pinned profile</span></div></div>
+      <div class="step"><span class="n">4</span><div class="tx"><b>Cold reboot — exactly once</b><span>Then treat the attestation services as untouchable</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- KEYBOX -->
+<section>
+  <div class="wrap">
+    <div class="warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      <div>
+        <h3>You must bring your own keybox</h3>
+        <p>The whole attestation chain is forged from <code>device/data_adb/tricky_store/keybox.xml</code> — and that file is deliberately <strong>not</strong> in this repo (it's <code>.gitignored</code>). The repo ships only <a href="https://github.com/tanishmeh/AVD_Rooted_Integrity/blob/master/device/data_adb/tricky_store/keybox.xml.example" target="_blank" rel="noopener">keybox.xml.example ↗</a> as a format reference. <strong>Supply your own valid keybox</strong> and drop it at that exact path before running the install script. Keep it private: a keybox committed to a public repo gets harvested and revoked by Google within hours, after which the verdict stops verifying.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCOPE -->
+<section id="scope">
+  <div class="wrap">
+    <div class="eyebrow">Scope</div>
+    <h2>What's in, what's out</h2>
+    <div class="scope" style="margin-top:36px">
+      <div>
+        <h3>In scope</h3>
+        <ul>
+          <li class="yes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> <span><strong>Full <code>MEETS_STRONG_INTEGRITY</code></strong> — no StrongBox, just your keybox + TEESimulator</span></li>
+          <li class="yes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> Custom kernel with source-level anti-emulator patches</li>
+          <li class="yes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> Prop &amp; <code>/proc</code> spoofing across all partitions + root hiding</li>
+          <li class="yes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 5 5L20 7"/></svg> <code>virt_wifi</code> networking + GSF check-in nudge</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Out of scope</h3>
+        <ul>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg> The keybox itself — you bring your own (none is vendored)</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg> No APKs / no sensor-name spoofing (a known gap)</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg> No carrier / eSIM provisioning</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg> No prebuilt binaries or device images — source + scripts only</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REPO MAP -->
+<section id="repo">
+  <div class="wrap">
+    <div class="eyebrow">Repository</div>
+    <h2>How it's laid out</h2>
+    <p class="section-lede">Everything is source, scripts and docs — auditable end to end.</p>
+    <div class="repomap">
+      <div class="rm-row"><span class="path">kernel-build/</span><span class="desc">Docker + scripts that build AOSP <code>common-android15-6.6</code> with KSU-Next, SUSFS and the source spoofs.</span></div>
+      <div class="rm-row"><span class="path">device/data_adb/</span><span class="desc">The on-device setup: prop spoofs, bind mounts, watchdogs, SUSFS rules, fakes and TrickyStore config.</span></div>
+      <div class="rm-row"><span class="path">device/pif/</span><span class="desc">PlayIntegrityFork profile — Pixel 9 / <code>tokay</code>, tuned for strong integrity, pinned (no autopif).</span></div>
+      <div class="rm-row"><span class="path">device/avd-config/</span><span class="desc">Host-side <code>config.ini</code> + <code>advancedFeatures.ini</code> templates (the critical Wi-Fi flags).</span></div>
+      <div class="rm-row"><span class="path">scripts/</span><span class="desc"><code>start_avd.sh</code>, <code>install-device-setup.sh</code>, and a read-only <code>verify-integrity.sh</code> health check.</span></div>
+      <div class="rm-row"><span class="path">docs/</span><span class="desc"><a href="reproduction.html">REPRODUCTION</a> — step by step. <a href="https://github.com/tanishmeh/AVD_Rooted_Integrity/blob/master/docs/INTEGRITY_CHAIN.md" target="_blank" rel="noopener">INTEGRITY_CHAIN.md ↗</a> — why each layer matters.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">AVD Integrity</div>
+        <p>A development &amp; testing tool for reproducing strong-integrity device behavior on an emulator. Source and scripts only — bring your own keybox.</p>
+      </div>
+      <div class="foot-links">
+        <a href="https://github.com/tanishmeh/AVD_Rooted_Integrity">GitHub</a>
+        <a href="reproduction.html">Guide</a>
+        <a href="https://github.com/tanishmeh/AVD_Rooted_Integrity/blob/master/docs/INTEGRITY_CHAIN.md" target="_blank" rel="noopener">The chain</a>
+      </div>
+    </div>
+    <div class="credits">
+      <b>Built on:</b> KernelSU-Next · SUSFS (simonpunk) · Wild Kernels · TEESimulator (JingMatrix) · PlayIntegrityFork (osm0sis / chiteroman) · ReZygisk (PerformanC) · Vector (JingMatrix).
+    </div>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
