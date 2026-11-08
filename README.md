@@ -219,3 +219,36 @@ TEESimulator 看门狗默认只告警、不自动拉起；需要恢复上游的�
 本仓库（Android-Claude）由 PhoneForClaude 的 v0.7 版本独立而来。
 
 基于 [tanishmeh/AVD_Rooted_Integrity](https://github.com/tanishmeh/AVD_Rooted_Integrity)，上游英文说明保留在 [docs/UPSTREAM_README.md](docs/UPSTREAM_README.md)。**上游仓库没有声明许可证**，因此本仓库也没有附带许可证，请保持私有；如要公开分发，先联系上游作者取得许可。
+
+## 11. 已知问题：X server 启动（本机实测）
+
+1. **Xauthority 放在 WSL `/tmp` 时 Windows 侧读不到。** `x86/scripts/start-x11.sh` 默认把 Xauthority 建在 `$TMPDIR`（通常是 `/tmp`），再用 `wslpath -w` 把 `\\wsl.localhost\...` 路径传给 VcXsrv。部分 Windows/WSL 组合下，`xserver-control.ps1` 的 `Test-Path` 会报 `UnauthorizedAccessException`，X server 起不来。
+
+   绕过：把临时目录指到 Windows 可读的 drvfs 路径：
+
+   ```bash
+   TMPDIR=/mnt/c/avd-work/tmp bash x86/scripts/start-x11.sh
+   ```
+
+   长期修复建议：在 `start-x11.sh` 中直接把 auth 文件创建在 `/mnt/c` 下，或在启动前把它复制到 Windows 可读位置。
+
+2. **偶发 `X server could not be reached from WSL`。** 通常是上一次的 VcXsrv 仍占用 6003 端口或未完全退出。先结束残留进程：
+
+   ```powershell
+   taskkill /IM vcxsrv.exe /F
+   ```
+
+   仍失败时，可手动启动 X server，再直接运行 `start.sh`：
+
+   ```bash
+   host_ip=$(ip route show default | awk 'NR==1 {print $3}')
+   auth=/mnt/c/avd-work/tmp/Xauthority
+   touch "$auth" && chmod 600 "$auth"
+   xauth -f "$auth" add "$host_ip:3" MIT-MAGIC-COOKIE-1 "$(mcookie)"
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(wslpath -w x86/scripts/xserver-control.ps1)" \
+     -Action Start -Executable "$(wslpath -w x86/xserver/vcxsrv.exe)" \
+     -Authority "$(wslpath -w "$auth")" -DisplayNumber 3
+   DISPLAY="$host_ip:3" XAUTHORITY="$auth" bash x86/scripts/start.sh
+   ```
+
+   这两个问题都不影响 KVM、内核或 AVD 本身；排查时先看启动日志里的 X server 报错。
