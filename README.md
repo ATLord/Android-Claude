@@ -2,10 +2,10 @@
 
 在 **Windows（WSL2）、Linux 或 Apple Silicon Mac** 上，用一个带自定义内核的 Android 模拟器（AVD）模拟 Root 后的 Pixel 设备，并尝试让它通过 Google Play Integrity。
 
-本项目改自 [tanishmeh/AVD_Rooted_Integrity](https://github.com/tanishmeh/AVD_Rooted_Integrity)（只支持 Apple Silicon 的 arm64）。在此基础上：
+本项目包括：
 
-- 新增 **Windows x86-64（WSL2）** 流程，Intel 和 AMD 有部署记录，但最新 Intel 嵌套虚拟化复测未通过结构检查；
-- 保留上游的 **macOS arm64** 流程，功能不删减；
+- **Windows x86-64（WSL2）** 流程，Intel 和 AMD 有部署记录，但最新 Intel 嵌套虚拟化复测未通过结构检查；
+- **macOS arm64** 流程，功能不删减；
 - 修复了验证脚本会给出错误结论等问题（见 [CHANGELOG](CHANGELOG.md)）。
 
 > **这是开发和测试工具，部署成功不等于 Play Integrity 通过。**
@@ -136,9 +136,9 @@ bash x86/scripts/check-network.sh     # Wi-Fi、DNS、HTTPS 探测
 
 这两个脚本会逐项打印结果，**需要你自己看每一项**，`check-device.sh` 退出码：0=所检查结构与捕获的模式通过，1=检查失败，2=没有捕获 attestation 活动。`check-network.sh` 是逐项诊断，须阅读探测结果。它们也不会给出 Google 的认证判定，真实结果要用实际的 Play Integrity 检测应用另行验证。
 
-## 4. macOS Apple Silicon（上游流程）
+## 4. macOS Apple Silicon
 
-此流程和上游完全一致，用 arm64 内核，需要先用 Android Studio 装好带 Google Play 的 Pixel 系统镜像，并创建 AVD，默认 AVD 名是 `Pixel_9_Pro_XL`，用 `AVD=你的名字 ./scripts/start_avd.sh` 可以改。完整步骤见 [docs/REPRODUCTION.md](docs/REPRODUCTION.md)，大致如下：
+此流程用 arm64 内核，需要先用 Android Studio 装好带 Google Play 的 Pixel 系统镜像，并创建 AVD，默认 AVD 名是 `Pixel_9_Pro_XL`，用 `AVD=你的名字 ./scripts/start_avd.sh` 可以改。完整步骤见 [docs/REPRODUCTION.md](docs/REPRODUCTION.md)，大致如下：
 
 ```bash
 # 1. 编译内核（Docker，约 10 GB，5 到 25 分钟）。macOS 必须用命名卷，原因见 kernel-build/README.md
@@ -183,14 +183,14 @@ cp /path/to/your/keybox.xml device/data_adb/tricky_store/keybox.xml
 | `AVD_X11_HOST` | 手动指定 Windows 主机地址 | 自动判断，NAT 用默认网关，镜像网络用 `127.0.0.1` |
 | `AVD_XSERVER` | VcXsrv 可执行文件路径 | `x86/xserver/vcxsrv.exe` |
 
-TEESimulator 看门狗默认只告警、不自动拉起；需要恢复上游的自动拉起行为，在设备上执行 `su -c touch /data/adb/avd-fake/tee-watchdog-relaunch`。原因见 [CHANGELOG](CHANGELOG.md)。
+TEESimulator 看门狗默认只告警、不自动拉起；需要恢复自动拉起行为，在设备上执行 `su -c touch /data/adb/avd-fake/tee-watchdog-relaunch`。原因见 [CHANGELOG](CHANGELOG.md)。
 
 ## 7. 项目结构
 
 | 路径 | 作用 |
 | --- | --- |
 | `x86/` | Windows / x86-64 流程：内核构建、SDK 与 AVD 创建、启动、模块安装、诊断脚本 |
-| `kernel-build/` | 上游的 arm64 内核构建；x86 构建也复用其中的源码获取和补丁脚本 |
+| `kernel-build/` | arm64 内核构建；x86 构建也复用其中的源码获取和补丁脚本 |
 | `device/` | 推送到模拟器 `/data/adb` 的配置和脚本，x86 与 ARM 共用 |
 | `scripts/` | `start_avd.sh`（ARM 启动）、`install-device-setup.sh`、`verify-integrity.sh`（两种架构共用） |
 | `tests/`、`x86/tests/` | 不依赖真机的脚本测试（用假的 adb 和 emulator） |
@@ -214,11 +214,22 @@ TEESimulator 看门狗默认只告警、不自动拉起；需要恢复上游的�
 
 - 最新用户复测：Intel + 嵌套虚拟化中身份、build.prop、cpuinfo、TEE 和 VirtWifi 未生效；本轮改动尚需在该环境冷启动复验。
 
-## 10. 来源与许可
+## 10. 鸣谢与许可
 
 本仓库（Android-Claude）由 PhoneForClaude 的 v0.7 版本独立而来。
 
-基于 [tanishmeh/AVD_Rooted_Integrity](https://github.com/tanishmeh/AVD_Rooted_Integrity)，上游英文说明保留在 [docs/UPSTREAM_README.md](docs/UPSTREAM_README.md)。**上游仓库没有声明许可证**，因此本仓库也没有附带许可证，请保持私有；如要公开分发，先联系上游作者取得许可。
+感谢以下项目与作者（模块版本和下载地址见 [device/modules.md](device/modules.md)）：
+
+- [tanishmeh/AVD_Rooted_Integrity](https://github.com/tanishmeh/AVD_Rooted_Integrity)：ARM64 / Apple Silicon 流程的基础；上游英文说明保留在 [docs/UPSTREAM_README.md](docs/UPSTREAM_README.md)。
+- [KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next)
+- [SUSFS](https://gitlab.com/simonpunk/susfs4ksu)（simonpunk）
+- [Wild Kernels](https://github.com/WildKernels)
+- [TEESimulator](https://github.com/JingMatrix/TEESimulator)（JingMatrix）
+- [PlayIntegrityFork](https://github.com/osm0sis/PlayIntegrityFork)（osm0sis / chiteroman）
+- [ReZygisk](https://github.com/PerformanC/ReZygisk)（PerformanC）
+- [Vector](https://github.com/JingMatrix/LSPosed)（JingMatrix）
+
+**许可：** 上游仓库没有声明许可证，因此本仓库也没有附带许可证，请保持私有；如要公开分发，先联系上游作者取得许可。
 
 ## 11. 已知问题：X server 启动（本机实测）
 
