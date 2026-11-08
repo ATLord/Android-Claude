@@ -2,6 +2,8 @@
 
 在 **Windows（WSL2）、Linux 或 Apple Silicon Mac** 上，用一个带自定义内核的 Android 模拟器（AVD）模拟 Root 后的 Pixel 设备，并尝试让它通过 Google Play Integrity。
 
+**AI安装提示词**：“在本电脑上，按照 https://github.com/ATLord/Android-Claude 这个项目的说明去安装该项目，然后xml的checkbox我桌面xx文件夹里面，你可以根据需要安装任意的skill、mcp去完成这个测试”
+
 本项目包括：
 
 - **Windows x86-64（WSL2）** 流程，Intel 和 AMD 有部署记录，但最新 Intel 嵌套虚拟化复测未通过结构检查；
