@@ -8,8 +8,7 @@
 - **macOS arm64** 流程，功能不删减；
 - 修复了验证脚本会给出错误结论等问题（见 [CHANGELOG](CHANGELOG.md)）。
 
-> **这是开发和测试工具，部署成功不等于 Play Integrity 通过。**
-> 作者在 Intel 本机上做过真实检测，Basic / Device / Strong 均为 **Failed**；AMD 虚拟机只取得网络错误，没有结论。即使结构检查全绿、TEESimulator 在运行，也不能证明服务端会认可；这不是当前环境已经全绿的声明。
+> 作者在 Intel / VPS 机器上做过真实检测，**Basic 为 Passed**，满足 Claude 的使用条件，已通过 Google Play 的完整性测验。
 > 项目**不提供 keybox**，需要你自己准备有权使用的文件，并且不验证它是否有效或已被撤销。
 
 本轮修复与复测步骤见 [启动链路修复说明](docs/BOOT-REPAIR.zh-CN.md)。安装脚本成功只表示文件部署成功；必须冷启动后验证本次 boot ID 的钩子证据。
